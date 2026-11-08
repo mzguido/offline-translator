@@ -14,6 +14,15 @@ mod live_pipeline_jni;
 #[cfg(target_os = "android")]
 mod bitmap_jni;
 
+/// Switch still-image OCR between the document paragraph grouper (left-aligned
+/// lines) and the live-camera grouper (also merges centered stacks, e.g. comic
+/// speech bubbles). Process-global; the app calls it on startup and when the
+/// setting changes.
+#[uniffi::export]
+pub fn set_still_image_centered_grouping(enabled: bool) {
+    translator::ocr::set_still_image_centered_grouping(enabled);
+}
+
 /// Idempotent logger init. Called from the first uniffi entry point
 /// (`CatalogHandle::open`) because uniffi 0.29 for Kotlin loads the
 /// .so via JNA, which does *not* invoke `JNI_OnLoad` — so a JNI-style

@@ -69,6 +69,8 @@ class SettingsManager(
 
     val minConfidence = prefs.getInt("min_confidence", defaults.minConfidence)
     val maxImageSize = prefs.getInt("max_image_size", defaults.maxImageSize).coerceIn(600, 2000)
+    val centeredImageLineGrouping =
+      prefs.getBoolean("centered_image_line_grouping", defaults.centeredImageLineGrouping)
     val disableCLD = prefs.getBoolean("disable_cld", defaults.disableCLD)
     val experimentalScreenTranslate =
       prefs.getBoolean("experimental_screen_translate", defaults.experimentalScreenTranslate)
@@ -165,6 +167,7 @@ class SettingsManager(
       backgroundMode = backgroundMode,
       minConfidence = minConfidence,
       maxImageSize = maxImageSize,
+      centeredImageLineGrouping = centeredImageLineGrouping,
       disableCLD = disableCLD,
       experimentalScreenTranslate = experimentalScreenTranslate,
       enableOutputTransliteration = enableOutputTransliteration,
@@ -232,6 +235,9 @@ class SettingsManager(
       }
       if (newSettings.maxImageSize != currentSettings.maxImageSize) {
         putInt("max_image_size", newSettings.maxImageSize)
+      }
+      if (newSettings.centeredImageLineGrouping != currentSettings.centeredImageLineGrouping) {
+        putBoolean("centered_image_line_grouping", newSettings.centeredImageLineGrouping)
       }
       if (newSettings.disableCLD != currentSettings.disableCLD) {
         putBoolean("disable_cld", newSettings.disableCLD)

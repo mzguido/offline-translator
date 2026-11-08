@@ -861,6 +861,32 @@ fun SettingsScreen(
             steps = 6,
             modifier = Modifier.fillMaxWidth(),
           )
+
+          // Line grouping for still images: document (left-aligned) vs camera-style (centered)
+          Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+          ) {
+            Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
+              Text(
+                text = stringResource(R.string.settings_centered_image_line_grouping),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+              )
+              Text(
+                text = stringResource(R.string.settings_centered_image_line_grouping_description),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+              )
+            }
+            Switch(
+              checked = settings.centeredImageLineGrouping,
+              onCheckedChange = { checked ->
+                onSettingsChange { it.copy(centeredImageLineGrouping = checked) }
+              },
+            )
+          }
         }
       }
 

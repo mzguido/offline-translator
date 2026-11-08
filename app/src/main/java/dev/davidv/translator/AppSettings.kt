@@ -44,6 +44,7 @@ data class AppSettings(
   val backgroundMode: BackgroundMode = BackgroundMode.AUTO_DETECT,
   val minConfidence: Int = 75,
   val maxImageSize: Int = 1400,
+  val centeredImageLineGrouping: Boolean = false,
   val disableCLD: Boolean = false,
   val experimentalScreenTranslate: Boolean = false,
   val enableOutputTransliteration: Boolean = true,

@@ -142,6 +142,9 @@ class TranslationCoordinator(
         val minConfidence = settingsManager.settings.value.minConfidence
         val backgroundMode = settingsManager.settings.value.backgroundMode
         val maxImageSize = settingsManager.settings.value.maxImageSize
+        uniffi.bindings.setStillImageCenteredGrouping(
+          settingsManager.settings.value.centeredImageLineGrouping,
+        )
         val sourceSelection =
           when (source) {
             is OverlaySource.Auto -> OcrSourceSelection.Auto

@@ -53,6 +53,8 @@
     <string name="settings_background_mode">Reemplazar texto con</string>
     <string name="settings_min_confidence">Confianza mínima: %1$d%%</string>
     <string name="settings_max_image_size">Tamaño máx. de imagen: %1$dpx</string>
+    <string name="settings_centered_image_line_grouping">Agrupar renglones centrados en imágenes</string>
+    <string name="settings_centered_image_line_grouping_description">Usa el agrupado de renglones de la cámara para imágenes y capturas, así el texto centrado (globos de cómic, carteles) se traduce en oraciones completas en lugar de renglón por renglón.</string>
     <string name="settings_advanced">Avanzado</string>
     <string name="settings_catalog_url">URL del catálogo</string>
     <string name="settings_external_storage">Usar almacenamiento externo</string>
