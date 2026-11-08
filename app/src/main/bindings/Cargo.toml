@@ -45,8 +45,10 @@ jni = { version = "0.21", default-features = false }
 
 [dependencies.translator]
 default-features = false
-path = "../../../../../translator-rs"
-# git = "https://github.com/DavidVentura/translator-rs.git"
+git = "https://github.com/mzguido/translator-rs.git"
+branch = "centered-grouping"
+# path = "../../../../../translator-rs"
+# upstream: https://github.com/DavidVentura/translator-rs.git
 features = ["uniffi", "html"]
 
 [target.'cfg(target_os = "android")'.dependencies]

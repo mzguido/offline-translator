@@ -2,9 +2,10 @@ name: Build Android App
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, centered-grouping ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,9 +19,12 @@ jobs:
         include:
           - abi: arm64-v8a
             label: arm64
-          - abi: armeabi-v7a
-            label: armv7
     steps:
+    - name: Free disk space
+      run: |
+        sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+        df -h /
+
     - name: Checkout code
       uses: actions/checkout@v4
       with:
@@ -45,16 +49,17 @@ jobs:
         if ! docker pull "$TAG" 2>/dev/null; then
           echo "Image missing, building..."
           docker build -t "$TAG" .
-          docker push "$TAG"
+          docker push "$TAG" || echo "push failed, continuing with local image"
         fi
 
+    # Debug build: signed with an auto-generated debug key so it installs directly.
     - name: Build ${{ matrix.label }}
       run: |
         docker run --rm \
           -v ${{ github.workspace }}:/build/build/dev.davidv.translator/ \
           --user $(id -u):$(id -g) \
           ${{ steps.img.outputs.tag }} \
-          ./gradlew assembleRelease -PtargetAbi=${{ matrix.abi }}
+          ./gradlew assembleDebug -PtargetAbi=${{ matrix.abi }}
 
     - name: Upload APK artifacts
       uses: actions/upload-artifact@v4

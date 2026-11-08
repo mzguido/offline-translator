@@ -52,6 +52,11 @@ android {
   }
 
   buildTypes {
+    debug {
+      // Fork builds install side by side with the upstream app.
+      applicationIdSuffix = ".fork"
+      versionNameSuffix = "-fork"
+    }
     release {
       isMinifyEnabled = true
       isShrinkResources = true
