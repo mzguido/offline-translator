@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fork debug builds: distinct launcher/assistant name from the upstream app. -->
+    <string name="app_name" translatable="false">Translator FORK</string>
+</resources>

@@ -55,6 +55,11 @@
     <string name="settings_background_mode">Replace text with</string>
     <string name="settings_min_confidence">Min Confidence: %1$d%%</string>
     <string name="settings_max_image_size">Max Image Size: %1$dpx</string>
+    <string name="fork_badge" translatable="false">FORK · %1$s · conf %2$d%%</string>
+    <string name="fork_grouping_centered" translatable="false">agrupado centrado</string>
+    <string name="fork_grouping_document" translatable="false">agrupado documento</string>
+    <string name="fork_result_status" translatable="false">%1$d bloques · %2$s</string>
+    <string name="fork_error_detail" translatable="false">Detalle: %1$s</string>
     <string name="settings_centered_image_line_grouping">Group centered lines in images</string>
     <string name="settings_centered_image_line_grouping_description">Use the camera\'s line grouping for images and screenshots, so centered text (comic bubbles, signs) is translated as whole sentences instead of line by line.</string>
     <string name="settings_advanced">Advanced</string>

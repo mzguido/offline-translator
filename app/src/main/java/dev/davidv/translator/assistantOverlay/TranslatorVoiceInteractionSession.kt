@@ -70,6 +70,7 @@ class TranslatorVoiceInteractionSession(
   private lateinit var screenshotView: ImageView
   private lateinit var overlayContainer: FrameLayout
   private lateinit var statusView: TextView
+  private var forkBadgeView: TextView? = null
   private lateinit var topBarView: View
   private var sourceLabelView: TextView? = null
   private var targetLabelView: TextView? = null
@@ -247,6 +248,33 @@ class TranslatorVoiceInteractionSession(
         }
     rootView.addView(statusView, statusParams)
 
+    // Fork marker: always-visible pill so this assistant is distinguishable from upstream.
+    forkBadgeView =
+      TextView(context).apply {
+        setTextColor(Color.BLACK)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+        setPadding(dpToPx(10), dpToPx(4), dpToPx(10), dpToPx(4))
+        background =
+          GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = dpToPx(10).toFloat()
+            setColor(Color.parseColor("#FFFFA000"))
+          }
+      }
+    rootView.addView(
+      forkBadgeView,
+      FrameLayout
+        .LayoutParams(
+          FrameLayout.LayoutParams.WRAP_CONTENT,
+          FrameLayout.LayoutParams.WRAP_CONTENT,
+        ).apply {
+          gravity = Gravity.BOTTOM or Gravity.START
+          bottomMargin = contentInsets.bottom + dpToPx(8)
+          leftMargin = contentInsets.left + dpToPx(8)
+        },
+    )
+    updateForkBadge()
+
     resultHost!!.installOn(rootView)
 
     showStatus(context.getString(R.string.assistant_invoke_prompt))
@@ -385,9 +413,11 @@ class TranslatorVoiceInteractionSession(
     surfaceState.showProcessing(workingBitmap)
     resultHost?.view?.visibility = View.VISIBLE
 
+    updateForkBadge()
     translationJob =
       sessionScope.launch {
         var ocrUnavailable = false
+        var errorDetail: String? = null
         val result =
           withContext(Dispatchers.IO) {
             translationCoordinator.translateImageWithOverlay(
@@ -398,13 +428,16 @@ class TranslatorVoiceInteractionSession(
               onDetectedRegions = { boxes, w, h ->
                 surfaceState.regions.value = DetectedRegions(w, h, boxes)
               },
+              onError = { errorDetail = it },
             )
           }
         ensureActive()
         processing = false
         if (result == null) {
           val statusRes = if (ocrUnavailable) R.string.ocr_models_missing else R.string.assistant_ocr_failed
-          showStatus(context.getString(statusRes))
+          // Fork: append the engine's actual error so failures are diagnosable on-device.
+          val detail = errorDetail?.let { "\n" + context.getString(R.string.fork_error_detail, it) } ?: ""
+          showStatus(context.getString(statusRes) + detail)
           clearResultOverlay()
           return@launch
         }
@@ -418,7 +451,11 @@ class TranslatorVoiceInteractionSession(
         setFlipButtonVisible(true)
         resultHost?.view?.visibility = View.VISIBLE
         updateBackdrop()
-        hideStatus()
+        // Fork: brief diagnostic instead of hiding the status outright.
+        showStatus(
+          context.getString(R.string.fork_result_status, result.metadata.blocks.size, forkGroupingLabel()),
+          autoHideAfterMs = 4000L,
+        )
       }
   }
 
@@ -467,6 +504,20 @@ class TranslatorVoiceInteractionSession(
           hideStatus()
         }
     }
+  }
+
+  private fun forkGroupingLabel(): String =
+    context.getString(
+      if (settingsManager.settings.value.centeredImageLineGrouping) {
+        R.string.fork_grouping_centered
+      } else {
+        R.string.fork_grouping_document
+      },
+    )
+
+  private fun updateForkBadge() {
+    val badge = forkBadgeView ?: return
+    badge.text = context.getString(R.string.fork_badge, forkGroupingLabel(), settingsManager.settings.value.minConfidence)
   }
 
   private fun hideStatus() {

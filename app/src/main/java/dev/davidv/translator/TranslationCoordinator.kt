@@ -134,6 +134,7 @@ class TranslationCoordinator(
     onMissingDetectedLanguage: (Language) -> Unit = {},
     onOcrUnavailable: () -> Unit = {},
     onDetectedRegions: (List<uniffi.translator_core.OrientedRect>, Int, Int) -> Unit = { _, _, _ -> },
+    onError: (String) -> Unit = {},
   ): ProcessedImageResult? =
     withContext(Dispatchers.IO) {
       val totalStart = System.currentTimeMillis()
@@ -199,6 +200,7 @@ class TranslationCoordinator(
               } else {
                 null
               }
+            onError(e.message ?: "missing asset")
             if (missingDetected != null) {
               onMissingDetectedLanguage(missingDetected)
             } else {
@@ -210,6 +212,7 @@ class TranslationCoordinator(
             return@withContext null
           } catch (e: uniffi.bindings.CatalogException) {
             Log.d("OCR", "ocr failed: ${e.message}")
+            onError(e.message ?: "OCR error")
             ocrImage.close()
             return@withContext null
           }
@@ -257,6 +260,7 @@ class TranslationCoordinator(
         )
       } catch (e: Exception) {
         Log.e("TranslationCoordinator", "Exception ${e.stackTrace}")
+        onError(e.message ?: e.javaClass.simpleName)
         null
       }
     }
